@@ -16,8 +16,9 @@
         #side-menu { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 100; overflow-y: auto; }
         .menu-overlay { background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 90; }
         
-        .btn-create { background-color: #1a1a1a; color: white; padding: 10px 20px; border-radius: 16px; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; transition: all 0.2s; width: fit-content; }
-        .btn-create:active { transform: scale(0.95); background-color: #000; }
+        /* Estilo del nuevo botón circular de crear */
+        .btn-create-circle { background-color: #1a1a1a; color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; transition: all 0.2s; shadow-sm; }
+        .btn-create-circle:active { transform: scale(0.9); background-color: #000; }
 
         .carousel-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; }
         .carousel-container::-webkit-scrollbar { display: none; }
@@ -30,7 +31,7 @@
         .btn-follow.following { background-color: #1a1a1a; color: white; border-color: #1a1a1a; }
         .btn-follow.not-following { background-color: #f3f4f6; color: #1a1a1a; }
 
-        .creation-container { background-color: #1a1a1a; border: 2px solid #000; border-radius: 28px; padding: 20px; display: none; margin-top: 15px; }
+        .creation-container { background-color: #1a1a1a; border: 2px solid #000; border-radius: 28px; padding: 20px; display: none; margin-bottom: 20px; }
         .creation-input { background: #2a2a2a; border: 1px solid #333; border-radius: 12px; padding: 10px; color: white; width: 100%; margin-bottom: 10px; outline: none; }
         .creation-input:focus { border-color: #00c853; }
         .tag-pill { background: #333; color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; cursor: pointer; }
@@ -70,9 +71,14 @@
     <header class="px-5 pt-8 pb-4 bg-[#f3f4f6] sticky top-0 z-40">
         <div class="flex justify-between items-center mb-5">
             <img src="imgsdinoti/dinotilogo.png.png" class="brand-logo" onerror="this.src='https://via.placeholder.com/120x48?text=dinoti'">
-            <button onclick="toggleMenu()" class="bg-white border border-gray-200 p-2 rounded-full w-12 h-12 flex items-center justify-center shadow-sm active:scale-90 transition-transform">
-                <i class="fa-solid fa-user text-2xl"></i>
-            </button>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleCreationArea()" class="btn-create-circle shadow-lg">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button onclick="toggleMenu()" class="bg-white border border-gray-200 p-2 rounded-full w-12 h-12 flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+                    <i class="fa-solid fa-user text-2xl"></i>
+                </button>
+            </div>
         </div>
         <div id="search-bar" class="flex gap-2">
             <div class="relative flex-grow">
@@ -85,11 +91,6 @@
 
     <div id="feed-view">
         <div class="px-6 py-4">
-            <button class="btn-create" onclick="toggleCreationArea()">
-                <i class="fa-solid fa-plus"></i>
-                <span id="btn-text">Crear</span>
-            </button>
-
             <div id="creation-area" class="creation-container">
                 <h4 class="text-white font-black text-[10px] uppercase tracking-widest mb-3">Nueva Publicación</h4>
                 <input type="text" placeholder="Título impactante..." class="creation-input font-bold">
@@ -111,6 +112,16 @@
 
                 <button class="w-full bg-white text-black font-black py-3 rounded-xl text-xs uppercase tracking-widest mt-2 hover:bg-gray-200">Publicar Ahora</button>
             </div>
+
+            <div class="bg-[#1a1a1a] rounded-[28px] p-6 mb-4 shadow-xl border border-black relative overflow-hidden">
+                <div class="relative z-10">
+                    <h3 class="text-white font-black text-xl mb-1 tracking-tighter">¿Qué es <span class="text-[#26c6da]">dinoti</span>?</h3>
+                    <p class="text-gray-300 text-xs leading-relaxed font-medium">
+                        Tu espacio <span class="text-[#00c853] font-bold">seguro</span> y creativo para compartir pasiones, descubrir foros únicos y conectar con una comunidad <span class="text-[#26c6da] font-bold">sin límites</span>.
+                    </p>
+                </div>
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-[#00c853]/10 rounded-full blur-2xl"></div>
+            </div>
         </div>
 
         <main id="feed-container" class="px-4 mt-0">
@@ -120,9 +131,12 @@
     </div>
 
     <div id="forum-detail-view" class="px-4">
-        <button onclick="closeForum()" class="mb-6 mt-2 flex items-center gap-2 text-blue-600 font-bold text-sm">
+        <button onclick="closeForum()" class="mb-4 mt-2 flex items-center gap-2 text-blue-600 font-bold text-sm">
             <i class="fa-solid fa-chevron-left"></i> Volver al Inicio
         </button>
+        
+        <div id="forum-author-info" class="mb-6 px-1"></div>
+
         <div id="forum-content-main"></div>
         <div class="mt-8 space-y-4" id="forum-replies"></div>
     </div>
@@ -134,17 +148,16 @@ const userTags = ["#Random", "#MiPost", "#Hack", "#Viral", "#Trend"];
 const postDate = "05/02/2026";
 
 const topics = [
-    { t: "Mejores rutas para senderismo", desc: "Un espacio para compartir las rutas más extremas y bellas de Latinoamérica.", img: "https://picsum.photos/seed/hiking/800/500", count: 5, members: 124 },
-    { t: "La IA en el arte moderno", desc: "¿Es el arte generado por IA arte real? Debatamos sobre el futuro creativo.", img: "https://picsum.photos/seed/ai/800/500", count: 1, members: 89 },
-    { t: "Economía digital 2024", desc: "Bitcoin, ETFs y el mercado actual.", img: "https://picsum.photos/seed/money/800/500", count: 1, members: 256 }
+    { t: "Mejores rutas para senderismo", desc: "Un espacio para compartir las rutas más extremas y bellas de Latinoamérica.", img: "https://picsum.photos/seed/hiking/800/500", count: 5, members: 124, author: "Usuario_0", authorImg: "https://i.pravatar.cc/150?u=10" },
+    { t: "La IA en el arte moderno", desc: "¿Es el arte generado por IA arte real? Debatamos sobre el futuro creativo.", img: "https://picsum.photos/seed/ai/800/500", count: 1, members: 89, author: "Usuario_33", authorImg: "https://i.pravatar.cc/150?u=11" },
+    { t: "Economía digital 2024", desc: "Bitcoin, ETFs y el mercado actual.", img: "https://picsum.photos/seed/money/800/500", count: 1, members: 256, author: "Usuario_66", authorImg: "https://i.pravatar.cc/150?u=12" }
 ];
 
 function toggleCreationArea() {
     const area = document.getElementById('creation-area');
-    const btnText = document.getElementById('btn-text');
     const isOpen = area.style.display === 'block';
     area.style.display = isOpen ? 'none' : 'block';
-    btnText.innerText = isOpen ? 'Crear' : 'Cerrar';
+    if(!isOpen) area.scrollIntoView({behavior: 'smooth'});
 }
 
 function openForum(index) {
@@ -153,18 +166,47 @@ function openForum(index) {
     document.getElementById('forum-detail-view').style.display = 'block';
     window.scrollTo(0, 0);
 
+    document.getElementById('forum-author-info').innerHTML = `
+        <div class="flex items-center gap-3 bg-white/50 p-2 rounded-2xl w-fit border border-gray-100">
+            <img src="${post.authorImg}" class="w-10 h-10 rounded-full border-2 border-white shadow-sm">
+            <div>
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Creado por:</p>
+                <p class="text-sm font-bold text-gray-900 leading-none">${post.author}</p>
+            </div>
+        </div>
+    `;
+
+    let forumTagsHtml = "";
+    for (let j = 0; j < 5; j++) {
+        const color = dinotiColors[Math.floor(Math.random() * dinotiColors.length)];
+        const name = userTags[Math.floor(Math.random() * userTags.length)];
+        forumTagsHtml += `<span class="tag ${color}">${name}</span>`;
+    }
+
     document.getElementById('forum-content-main').innerHTML = `
         <h1 class="text-3xl font-black text-gray-900 leading-tight mb-4">${post.t}</h1>
         <p class="text-gray-600 text-sm mb-6 bg-white p-4 rounded-2xl border border-gray-100">${post.desc}</p>
         <div class="w-full aspect-video rounded-[32px] overflow-hidden mb-6 shadow-xl border-4 border-white">
             <img src="${post.img}" class="w-full h-full object-cover">
         </div>
+
+        <div class="flex items-center gap-2 mb-3 text-gray-400 px-1">
+            <i class="fa-solid fa-tags text-[10px]"></i>
+            <span class="text-[9px] font-black uppercase tracking-widest">Explorar Etiquetas:</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 mb-6 px-1">${forumTagsHtml}</div>
+
         <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+            <div class="flex items-center gap-3">
+                 <button onclick="toggleLike(this)" class="btn-interaction">
+                    <i class="fa-regular fa-heart text-red-500 text-lg"></i>
+                 </button>
+                 <button class="bg-[#00c853] text-white px-6 py-2 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-green-100">Comentar</button>
+            </div>
             <div class="flex items-center gap-4">
                  <span class="text-xs font-black text-gray-400 uppercase"><i class="fa-solid fa-users text-blue-500"></i> ${post.members}</span>
                  <span class="text-xs font-black text-gray-400 uppercase"><i class="fa-solid fa-heart text-red-500"></i> ${250 + index}</span>
             </div>
-            <button class="bg-[#00c853] text-white px-6 py-2 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-green-100">Comentar</button>
         </div>
     `;
     loadForumReplies();
@@ -195,7 +237,6 @@ function loadForumReplies() {
     }
 }
 
-// RENDER FEED CON ETIQUETAS E ICONO
 const postsWrapper = document.getElementById('posts-wrapper');
 topics.forEach((post, i) => {
     let tagsHtml = "";
@@ -210,9 +251,9 @@ topics.forEach((post, i) => {
         <div class="card-border p-5 mb-6 bg-white shadow-md">
             <div class="flex justify-between items-start mb-4 gap-2">
                 <div class="flex items-center gap-3">
-                    <img src="https://i.pravatar.cc/150?u=${i+10}" class="w-11 h-11 rounded-full object-cover">
+                    <img src="${post.authorImg}" class="w-11 h-11 rounded-full object-cover">
                     <div class="flex items-center gap-2">
-                        <span class="font-bold text-gray-900 text-sm">Usuario_${i*33}</span>
+                        <span class="font-bold text-gray-900 text-sm">${post.author}</span>
                         <button onclick="toggleFollow(this)" class="btn-follow not-following">Seguir</button>
                     </div>
                 </div>
@@ -236,9 +277,7 @@ topics.forEach((post, i) => {
                     <span class="flex items-center gap-1.5 text-gray-900"><i class="fa-solid fa-heart text-red-500 text-sm"></i> ${200 + i*45}</span>
                 </div>
             </div>
-            
             <hr class="border-dashed border-gray-300 mb-4">
-            
             <div class="flex items-center gap-2 mb-3 text-gray-400">
                 <i class="fa-solid fa-tags text-[10px]"></i>
                 <span class="text-[9px] font-black uppercase tracking-widest">Explorar Etiquetas:</span>
