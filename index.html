@@ -16,213 +16,60 @@
         #side-menu { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 100; overflow-y: auto; }
         .menu-overlay { background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 90; }
         
-        .btn-create {
-            background-color: #1a1a1a;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 16px;
-            font-weight: 800;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-            width: fit-content;
-        }
+        .btn-create { background-color: #1a1a1a; color: white; padding: 10px 20px; border-radius: 16px; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; transition: all 0.2s; width: fit-content; }
         .btn-create:active { transform: scale(0.95); background-color: #000; }
 
-        .editor-field { width: 100%; background: transparent; border: none; outline: none; }
-        .media-box { border: 2px dashed #e5e7eb; border-radius: 24px; transition: all 0.2s; cursor: pointer; }
-        .media-box:hover { border-color: #00c853; background: #f0fdf4; }
-        .pre-tag { cursor: pointer; transition: transform 0.1s; }
-        .pre-tag:active { transform: scale(0.9); }
+        .carousel-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; }
+        .carousel-container::-webkit-scrollbar { display: none; }
+        .carousel-item { flex: 0 0 100%; scroll-snap-align: start; position: relative; }
+        .photo-counter { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; backdrop-filter: blur(4px); z-index: 10;}
+        .swipe-hint { animation: bounceSide 2s infinite; }
+        @keyframes bounceSide { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
 
-        .profile-input { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; font-size: 13px; font-weight: 600; width: 100%; outline: none; transition: border-color 0.2s; }
-        .profile-input:focus { border-color: #00c853; }
+        .btn-follow { padding: 4px 12px; border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; transition: all 0.2s; border: 1px solid #e5e7eb; }
+        .btn-follow.following { background-color: #1a1a1a; color: white; border-color: #1a1a1a; }
+        .btn-follow.not-following { background-color: #f3f4f6; color: #1a1a1a; }
 
-        .avatar-upload-box { 
-            width: 80px; 
-            height: 80px; 
-            border-radius: 24px; 
-            border: 2px dashed #e5e7eb; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .avatar-upload-box:hover { border-color: #00c853; background: #f0fdf4; }
-        .avatar-preview-small { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+        .creation-container { background-color: #1a1a1a; border: 2px solid #000; border-radius: 28px; padding: 20px; display: none; margin-top: 15px; }
+        .creation-input { background: #2a2a2a; border: 1px solid #333; border-radius: 12px; padding: 10px; color: white; width: 100%; margin-bottom: 10px; outline: none; }
+        .creation-input:focus { border-color: #00c853; }
+        .tag-pill { background: #333; color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; cursor: pointer; }
+        
+        .media-btn { background: #2a2a2a; color: #9ca3af; padding: 8px 12px; border-radius: 12px; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 6px; border: 1px dashed #444; transition: all 0.2s; }
 
-        .glass-header { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
-        .stat-card { background: #f8fafc; border: 1px solid #f1f5f9; padding: 10px; border-radius: 16px; text-align: center; }
+        .btn-interaction { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #fff; border: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all 0.2s; }
+        .btn-interaction:active { transform: scale(0.9); background: #fff1f1; }
 
-        /* Estilo para el nuevo botón de seguir */
-        .btn-follow {
-            padding: 4px 12px;
-            border-radius: 10px;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            transition: all 0.2s;
-            border: 1px solid #e5e7eb;
-        }
-        .btn-follow.following {
-            background-color: #1a1a1a;
-            color: white;
-            border-color: #1a1a1a;
-        }
-        .btn-follow.not-following {
-            background-color: #f3f4f6;
-            color: #1a1a1a;
-        }
+        #forum-detail-view { display: none; }
     </style>
 </head>
 <body class="max-w-md mx-auto min-h-screen pb-10 relative">
 
     <div id="overlay" class="fixed inset-0 menu-overlay hidden" onclick="toggleMenu()"></div>
-
     <nav id="side-menu" class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl transform translate-x-full overflow-hidden flex flex-col">
         <div class="bg-gradient-to-br from-[#1a1a1a] to-[#434343] p-8 text-white relative">
             <button onclick="toggleMenu()" class="absolute top-6 right-6 text-white/60 text-2xl hover:text-white">&times;</button>
             <div class="flex items-center gap-4 mb-2">
-                <div class="relative">
-                    <img id="menu-avatar" src="https://i.pravatar.cc/150?u=Nelson" class="w-16 h-16 rounded-2xl border-2 border-white/20 shadow-xl object-cover">
-                    <div class="absolute -bottom-1 -right-1 bg-[#00c853] w-4 h-4 rounded-full border-2 border-[#1a1a1a]"></div>
-                </div>
+                <img src="https://i.pravatar.cc/150?u=Nelson" class="w-16 h-16 rounded-2xl border-2 border-white/20 shadow-xl object-cover">
                 <div>
-                    <h3 id="display-username" class="font-black text-xl tracking-tight leading-none">Nelsonpipper</h3>
-                    <p id="display-occupation" class="text-gray-400 text-[10px] mt-1 font-bold uppercase tracking-widest opacity-90">DinotiWitter</p>
+                    <h3 class="font-black text-xl tracking-tight leading-none">NelsonPipper</h3>
+                    <p class="text-gray-400 text-[10px] mt-1 font-bold uppercase tracking-widest opacity-90">CEO</p>
                 </div>
             </div>
         </div>
-
-        <div class="flex-grow overflow-y-auto">
-            <div id="menu-main-view" class="p-6 space-y-6">
-                <div class="space-y-3">
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-[2px] ml-1">Mi Cuenta</span>
-                    
-                    <button onclick="showProfileView()" class="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-gray-200 hover:bg-white transition-all group active:scale-95 shadow-sm">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-black p-2.5 rounded-xl text-white group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-eye"></i>
-                            </div>
-                            <div class="text-left">
-                                <span class="font-bold text-gray-800 block text-sm">Ver Perfil</span>
-                                <span class="text-[10px] text-gray-400">Mira cómo te ven otros</span>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                    </button>
-
-                    <button onclick="showProfileEditor()" class="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-gray-200 hover:bg-white transition-all group active:scale-95 shadow-sm">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-black p-2.5 rounded-xl text-white group-hover:scale-110 transition-transform">
-                                <i class="fa-solid fa-user-gear"></i>
-                            </div>
-                            <div class="text-left">
-                                <span class="font-bold text-gray-800 block text-sm">Editar Perfil</span>
-                                <span class="text-[10px] text-gray-400">Personaliza tu espacio</span>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
-                    </button>
-
-                    <button onclick="alert('Cerrando sesión...')" class="w-full flex items-center gap-3 p-4 text-red-500 font-bold text-sm hover:bg-red-50 rounded-2xl transition-colors">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        <span>Cerrar Sesión</span>
-                    </button>
-                </div>
-
-                <div class="space-y-2 pt-4 border-t border-gray-100">
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-[2px] ml-1">Información</span>
-                    <div class="grid grid-cols-1 gap-2">
-                        <a href="#" class="text-xs font-bold text-gray-500 hover:text-black transition-colors px-1">Privacidad y Cookies</a>
-                        <a href="#" class="text-xs font-bold text-gray-500 hover:text-black transition-colors px-1">Condiciones del Servicio</a>
-                        <a href="#" class="text-xs font-bold text-gray-500 hover:text-black transition-colors px-1">Normas de la Comunidad</a>
-                    </div>
-                </div>
-            </div>
-
-            <div id="menu-edit-view" class="p-6 space-y-6 hidden">
-                <div class="flex items-center gap-2 mb-4">
-                    <button onclick="showMainMenu()" class="bg-black text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-arrow-left"></i> Regresar
-                    </button>
-                </div>
-
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Imagen de Perfil</label>
-                        <div class="flex items-center gap-4">
-                            <div class="avatar-upload-box" onclick="document.getElementById('avatar-input').click()">
-                                <img id="avatar-preview-edit" src="https://i.pravatar.cc/150?u=Nelson" class="avatar-preview-small">
-                                <div class="bg-black/40 absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                                    <i class="fa-solid fa-camera text-white text-lg"></i>
-                                </div>
-                            </div>
-                            <input type="file" id="avatar-input" class="hidden" accept="image/*" onchange="previewImage(this)">
-                            <div class="text-left">
-                                <p class="text-[10px] font-bold text-gray-600">Formato: JPG, PNG</p>
-                                <button onclick="document.getElementById('avatar-input').click()" class="text-[10px] text-[#00c853] font-black uppercase underline">Cambiar foto</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Nombre de Usuario</label>
-                        <input type="text" id="edit-username" class="profile-input" value="Nelsonpipper">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Ocupación</label>
-                        <input type="text" id="edit-occupation" class="profile-input" value="DinotiWitter">
-                    </div>
-
-                    <div class="pt-2">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-3">Tus Preferencias</label>
-                        <div id="profile-selected-tags" class="flex flex-wrap gap-2 mb-4"></div>
-                        <div class="space-y-3">
-                            <div class="flex gap-2">
-                                <input id="profile-tag-input" type="text" placeholder="Añadir interés..." class="flex-grow bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-black">
-                                <button onclick="addProfileTag()" class="bg-black text-white px-4 rounded-xl text-[10px] font-black uppercase">Ok</button>
-                            </div>
-                            
-                            <div class="pt-2">
-                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Dinoti Default</span>
-                                <div id="profile-default-picker" class="flex flex-wrap gap-2"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Correo de Google (Solo lectura)</label>
-                        <div class="profile-input bg-gray-100 text-gray-400 flex items-center gap-2">
-                            <i class="fa-brands fa-google"></i> nelson.p@gmail.com
-                        </div>
-                    </div>
-                    
-                    <button onclick="saveProfile()" class="w-full bg-[#00c853] text-white py-3.5 rounded-xl font-black uppercase text-[11px] tracking-widest shadow-lg shadow-green-100 active:scale-95 transition-all mt-4">
-                        Guardar Cambios
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="p-6 border-t border-gray-50 bg-white">
-            <div class="text-[9px] text-gray-400 font-black flex justify-between uppercase tracking-tighter">
-                <span>dinoti platforms</span>
-                <span>2026 ©</span>
-            </div>
+        <div class="p-6 space-y-4">
+            <button class="w-full flex items-center gap-3 p-4 bg-gray-50 rounded-2xl font-bold text-sm hover:bg-gray-100 transition-all">
+                <i class="fa-solid fa-user-gear"></i> Editar Perfil
+            </button>
+            <button class="w-full flex items-center gap-3 p-4 text-red-500 font-bold text-sm hover:bg-red-50 rounded-2xl transition-colors">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión
+            </button>
         </div>
     </nav>
 
-    <header id="main-header" class="px-5 pt-8 pb-4 bg-[#f3f4f6] sticky top-0 z-40">
+    <header class="px-5 pt-8 pb-4 bg-[#f3f4f6] sticky top-0 z-40">
         <div class="flex justify-between items-center mb-5">
-            <img src="imgsdinoti/dinotilogo.png" alt="dinoti logo" class="brand-logo" onerror="this.src='https://via.placeholder.com/120x48?text=dinoti'">
+            <img src="imgsdinoti/dinotilogo.png.png" class="brand-logo" onerror="this.src='https://via.placeholder.com/120x48?text=dinoti'">
             <button onclick="toggleMenu()" class="bg-white border border-gray-200 p-2 rounded-full w-12 h-12 flex items-center justify-center shadow-sm active:scale-90 transition-transform">
                 <i class="fa-solid fa-user text-2xl"></i>
             </button>
@@ -236,341 +83,196 @@
         </div>
     </header>
 
-    <div id="create-section" class="px-6 py-4">
-        <button id="btn-create-master" class="btn-create" onclick="toggleEditor()">
-            <i id="create-icon" class="fa-solid fa-plus"></i>
-            <span id="create-text">Crear Foro</span>
-        </button>
+    <div id="feed-view">
+        <div class="px-6 py-4">
+            <button class="btn-create" onclick="toggleCreationArea()">
+                <i class="fa-solid fa-plus"></i>
+                <span id="btn-text">Crear</span>
+            </button>
+
+            <div id="creation-area" class="creation-container">
+                <h4 class="text-white font-black text-[10px] uppercase tracking-widest mb-3">Nueva Publicación</h4>
+                <input type="text" placeholder="Título impactante..." class="creation-input font-bold">
+                <textarea placeholder="¿Qué tienes en mente?" class="creation-input h-20 resize-none text-sm"></textarea>
+                
+                <div class="flex gap-3 mb-4">
+                    <button class="media-btn flex-1"><i class="fa-solid fa-image"></i> Foto</button>
+                    <button class="media-btn flex-1"><i class="fa-solid fa-clapperboard"></i> Video</button>
+                </div>
+
+                <div class="mb-3">
+                    <p class="text-gray-500 text-[9px] font-bold uppercase mb-2">Crea Tus Etiquetas:</p>
+                    <div id="user-tags-container" class="flex flex-wrap gap-2 mb-2"></div>
+                    <div class="flex gap-2">
+                        <input id="new-tag-input" type="text" placeholder="#" class="creation-input mb-0 text-xs py-1 w-24">
+                        <button onclick="addTag()" class="bg-[#00c853] text-white px-3 rounded-lg text-[10px] font-bold uppercase">Añadir</button>
+                    </div>
+                </div>
+
+                <button class="w-full bg-white text-black font-black py-3 rounded-xl text-xs uppercase tracking-widest mt-2 hover:bg-gray-200">Publicar Ahora</button>
+            </div>
+        </div>
+
+        <main id="feed-container" class="px-4 mt-0">
+            <h2 class="text-2xl font-black mb-5 px-2 text-gray-900">Explora La Comunidad</h2>
+            <div id="posts-wrapper"></div>
+        </main>
     </div>
 
-    <main id="feed-container" class="px-4 mt-0">
-        <h2 class="text-2xl font-black mb-5 px-2 text-gray-900">Foros populares</h2>
-        <div id="posts-wrapper"></div>
-    </main>
+    <div id="forum-detail-view" class="px-4">
+        <button onclick="closeForum()" class="mb-6 mt-2 flex items-center gap-2 text-blue-600 font-bold text-sm">
+            <i class="fa-solid fa-chevron-left"></i> Volver al Inicio
+        </button>
+        <div id="forum-content-main"></div>
+        <div class="mt-8 space-y-4" id="forum-replies"></div>
+    </div>
 
-    <section id="profile-view-container" class="hidden animate-fade-in">
-        <div class="h-32 bg-gradient-to-r from-green-400 to-blue-500 rounded-b-[40px] mb-[-60px]"></div>
-        
-        <div class="px-6 relative">
-            <div class="flex flex-col items-center mb-8">
-                <div class="relative mb-4">
-                    <img id="view-profile-avatar" src="https://i.pravatar.cc/150?u=Nelson" class="w-32 h-32 rounded-[40px] border-4 border-white shadow-2xl object-cover">
-                    <div class="absolute bottom-2 right-2 bg-[#00c853] w-6 h-6 rounded-full border-4 border-white"></div>
-                </div>
-                <h2 id="view-profile-name" class="text-2xl font-black text-gray-900 leading-none">Nelsonpipper</h2>
-                <p id="view-profile-occ" class="text-[11px] font-black text-gray-400 uppercase tracking-[3px] mt-2">DinotiWitter</p>
-            </div>
+<script>
+const dinotiColors = ["bg-[#ff7043]", "bg-[#26c6da]", "bg-[#cddc39]", "bg-pink-500"];
+const defaultNames = ["Tecno", "Arte", "Debate", "IA", "Naturaleza", "Viajes", "Deporte", "Economia"];
+const userTags = ["#Random", "#MiPost", "#Hack", "#Viral", "#Trend"];
+const postDate = "05/02/2026";
 
-            <div class="grid grid-cols-3 gap-3 mb-8">
-                <div class="stat-card">
-                    <span class="block text-lg font-black text-gray-800">12</span>
-                    <span class="text-[9px] uppercase font-bold text-gray-400">Foros</span>
-                </div>
-                <div class="stat-card">
-                    <span class="block text-lg font-black text-gray-800">842</span>
-                    <span class="text-[9px] uppercase font-bold text-gray-400">Likes</span>
-                </div>
-                <div class="stat-card">
-                    <span id="followers-count" class="block text-lg font-black text-gray-800">56</span>
-                    <span class="text-[9px] uppercase font-bold text-gray-400">Seguidores</span>
-                </div>
-            </div>
+const topics = [
+    { t: "Mejores rutas para senderismo", desc: "Un espacio para compartir las rutas más extremas y bellas de Latinoamérica.", img: "https://picsum.photos/seed/hiking/800/500", count: 5, members: 124 },
+    { t: "La IA en el arte moderno", desc: "¿Es el arte generado por IA arte real? Debatamos sobre el futuro creativo.", img: "https://picsum.photos/seed/ai/800/500", count: 1, members: 89 },
+    { t: "Economía digital 2024", desc: "Bitcoin, ETFs y el mercado actual.", img: "https://picsum.photos/seed/money/800/500", count: 1, members: 256 }
+];
 
-            <div class="mb-8 px-2">
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-3">Preferencias</span>
-                <div id="view-profile-tags" class="flex flex-wrap gap-2">
-                    <span class="tag bg-black">Tecnología</span>
-                    <span class="tag bg-[#26c6da]">IA</span>
-                </div>
-            </div>
+function toggleCreationArea() {
+    const area = document.getElementById('creation-area');
+    const btnText = document.getElementById('btn-text');
+    const isOpen = area.style.display === 'block';
+    area.style.display = isOpen ? 'none' : 'block';
+    btnText.innerText = isOpen ? 'Crear' : 'Cerrar';
+}
 
-            <div class="px-2">
-                <div class="flex justify-between items-end mb-4">
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Foros Creados</span>
-                    <span class="text-[10px] font-black text-[#00c853] uppercase underline cursor-pointer">Ver todos</span>
-                </div>
-                <div class="grid grid-cols-1 gap-4" id="profile-posts-grid">
-                    </div>
-            </div>
+function openForum(index) {
+    const post = topics[index];
+    document.getElementById('feed-view').style.display = 'none';
+    document.getElementById('forum-detail-view').style.display = 'block';
+    window.scrollTo(0, 0);
+
+    document.getElementById('forum-content-main').innerHTML = `
+        <h1 class="text-3xl font-black text-gray-900 leading-tight mb-4">${post.t}</h1>
+        <p class="text-gray-600 text-sm mb-6 bg-white p-4 rounded-2xl border border-gray-100">${post.desc}</p>
+        <div class="w-full aspect-video rounded-[32px] overflow-hidden mb-6 shadow-xl border-4 border-white">
+            <img src="${post.img}" class="w-full h-full object-cover">
         </div>
-    </section>
-
-    <section id="editor-container" class="px-4 hidden">
-        <h2 class="text-2xl font-black mb-5 px-2 text-gray-900">Nueva Publicación</h2>
-        <div class="card-border p-6 bg-white shadow-xl">
-            <input type="text" placeholder="Insertar título..." class="editor-field text-xl font-bold mb-4">
-            <textarea placeholder="Insertar discusión o descripción..." class="editor-field text-sm text-gray-600 min-h-[100px] mb-4 resize-none"></textarea>
-
-            <div class="media-box p-8 flex flex-col items-center justify-center mb-6 text-gray-400" onclick="alert('Módulo de multimedia: Seleccionar archivo')">
-                <i class="fa-solid fa-images text-2xl mb-2"></i>
-                <span class="text-[10px] font-black uppercase tracking-widest text-center">Insertar o agregar imgs o multimedia</span>
+        <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+            <div class="flex items-center gap-4">
+                 <span class="text-xs font-black text-gray-400 uppercase"><i class="fa-solid fa-users text-blue-500"></i> ${post.members}</span>
+                 <span class="text-xs font-black text-gray-400 uppercase"><i class="fa-solid fa-heart text-red-500"></i> ${250 + index}</span>
             </div>
+            <button class="bg-[#00c853] text-white px-6 py-2 rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-green-100">Comentar</button>
+        </div>
+    `;
+    loadForumReplies();
+}
 
-            <div class="mb-6">
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-3">Etiquetas seleccionadas</span>
-                <div id="selected-tags" class="flex flex-wrap gap-2 mb-4"></div>
+function closeForum() {
+    document.getElementById('feed-view').style.display = 'block';
+    document.getElementById('forum-detail-view').style.display = 'none';
+}
 
-                <div class="space-y-4">
-                    <div class="flex gap-2">
-                        <input id="custom-tag-input" type="text" placeholder="Generar tu propia etiqueta..." class="flex-grow bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-black">
-                        <button onclick="addCustomTag()" class="bg-black text-white px-4 rounded-xl text-[10px] font-black uppercase">Añadir</button>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Dinoti Etiquetas</span>
-                        <div id="default-tags-picker" class="flex flex-wrap gap-2"></div>
+function loadForumReplies() {
+    const container = document.getElementById('forum-replies');
+    container.innerHTML = `<h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Participaciones Recientes</h4>`;
+    for(let i=0; i<2; i++) {
+        container.innerHTML += `
+            <div class="bg-white p-5 rounded-[28px] border border-gray-100 shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <div class="flex items-center gap-3">
+                        <img src="https://i.pravatar.cc/150?u=a${i}" class="w-10 h-10 rounded-full">
+                        <div>
+                            <p class="text-xs font-black text-gray-900">User_Expert_${i}</p>
+                            <span class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">${postDate}</span>
+                        </div>
                     </div>
                 </div>
+                <div class="text-sm text-gray-800 leading-snug">Excelente aporte. Me interesa saber más.</div>
+            </div>`;
+    }
+}
+
+// RENDER FEED CON ETIQUETAS E ICONO
+const postsWrapper = document.getElementById('posts-wrapper');
+topics.forEach((post, i) => {
+    let tagsHtml = "";
+    const tagLimit = (i === 0) ? 8 : 4;
+    for (let j = 0; j < tagLimit; j++) {
+        const color = Math.random() > 0.5 ? "bg-black" : dinotiColors[Math.floor(Math.random() * dinotiColors.length)];
+        const name = Math.random() > 0.5 ? userTags[Math.floor(Math.random() * userTags.length)] : defaultNames[Math.floor(Math.random() * defaultNames.length)];
+        tagsHtml += `<span class="tag ${color}">${name}</span>`;
+    }
+
+    postsWrapper.innerHTML += `
+        <div class="card-border p-5 mb-6 bg-white shadow-md">
+            <div class="flex justify-between items-start mb-4 gap-2">
+                <div class="flex items-center gap-3">
+                    <img src="https://i.pravatar.cc/150?u=${i+10}" class="w-11 h-11 rounded-full object-cover">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold text-gray-900 text-sm">Usuario_${i*33}</span>
+                        <button onclick="toggleFollow(this)" class="btn-follow not-following">Seguir</button>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="text-[9px] border border-gray-100 rounded-full px-2 py-1 text-gray-400 font-black bg-gray-50 uppercase tracking-tighter">${postDate}</div>
+                    <button onclick="toggleSave(this)" class="text-gray-400"><i class="fa-regular fa-bookmark text-lg"></i></button>
+                </div>
             </div>
-
-            <button onclick="publishPost()" class="w-full bg-[#00c853] text-white py-4 rounded-[20px] font-black uppercase text-xs tracking-[2px] shadow-lg shadow-green-100 active:scale-95 transition-all">
-                Publicar en Dinoti
-            </button>
-        </div>
-    </section>
-
-    <script>
-        const dinotiColors = ["bg-[#ff7043]", "bg-[#26c6da]", "bg-[#cddc39]", "bg-[#0052cc]", "bg-pink-500"];
-        const blackTags = ["Exclusivo", "Tendencia", "Destacado", "DinotiPro", "Viral"];
-        const defaultNames = ["Tecno", "Arte", "Debate", "IA", "Naturaleza", "Viajes", "Deporte", "Economia"];
-        const topics = [{ t: "Mejores rutas para senderismo", tags: ["Naturaleza", "Viajes"], img: "https://picsum.photos/seed/hiking/800/500" }];
-
-        function toggleMenu() {
-            document.getElementById('side-menu').classList.toggle('translate-x-full');
-            document.getElementById('overlay').classList.toggle('hidden');
-        }
-
-        // Nueva función para el botón Seguir
-        function toggleFollow(btn) {
-            if(btn.innerText === "SEGUIR") {
-                btn.innerText = "SIGUIENDO";
-                btn.classList.remove('not-following');
-                btn.classList.add('following');
-            } else {
-                btn.innerText = "SEGUIR";
-                btn.classList.remove('following');
-                btn.classList.add('not-following');
-            }
-        }
-
-        function showProfileView() {
-            toggleMenu(); 
-            document.getElementById('feed-container').classList.add('hidden');
-            document.getElementById('editor-container').classList.add('hidden');
-            document.getElementById('create-section').classList.add('hidden');
-            document.getElementById('search-bar').classList.add('hidden');
-
-            const profileView = document.getElementById('profile-view-container');
-            profileView.classList.remove('hidden');
-
-            document.getElementById('view-profile-name').innerText = document.getElementById('display-username').innerText;
-            document.getElementById('view-profile-occ').innerText = document.getElementById('display-occupation').innerText;
-            document.getElementById('view-profile-avatar').src = document.getElementById('menu-avatar').src;
-
-            const btnText = document.getElementById('create-text');
-            const btnIcon = document.getElementById('create-icon');
-            const btnMaster = document.getElementById('btn-create-master');
+            <h3 class="text-lg font-bold leading-tight mb-4 text-gray-900">${post.t}</h3>
+            <div class="w-full aspect-video rounded-[24px] overflow-hidden border border-gray-50 shadow-inner">
+                <img src="${post.img}?sig=${i}" class="w-full h-full object-cover">
+            </div>
+            <div class="flex items-center justify-between mt-5 mb-5 px-1">
+                <div class="flex items-center gap-3">
+                    <button onclick="openForum(${i})" class="bg-[#0052cc] text-white px-7 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-100">Ver Foro</button>
+                    <button onclick="toggleLike(this)" class="btn-interaction"><i class="fa-regular fa-heart text-red-500 text-lg"></i></button>
+                </div>
+                <div class="flex items-center gap-4 text-gray-500 font-bold text-[11px] uppercase tracking-tighter">
+                    <span class="flex items-center gap-1.5"><i class="fa-regular fa-comment text-blue-500 text-sm"></i> ${i + 2}</span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-users text-gray-400 text-sm"></i> ${post.members}</span>
+                    <span class="flex items-center gap-1.5 text-gray-900"><i class="fa-solid fa-heart text-red-500 text-sm"></i> ${200 + i*45}</span>
+                </div>
+            </div>
             
-            document.getElementById('create-section').classList.remove('hidden');
-            btnText.innerText = "Regresar al Inicio";
-            btnIcon.className = "fa-solid fa-arrow-left";
-            btnMaster.onclick = exitProfileView;
-
-            renderProfilePosts();
-        }
-
-        function exitProfileView() {
-            document.getElementById('profile-view-container').classList.add('hidden');
-            document.getElementById('feed-container').classList.remove('hidden');
-            document.getElementById('create-section').classList.remove('hidden');
-            document.getElementById('search-bar').classList.remove('hidden');
-
-            const btnText = document.getElementById('create-text');
-            const btnIcon = document.getElementById('create-icon');
-            const btnMaster = document.getElementById('btn-create-master');
-
-            btnText.innerText = "Crear Foro";
-            btnIcon.className = "fa-solid fa-plus";
-            btnMaster.onclick = toggleEditor;
-        }
-
-        function renderProfilePosts() {
-            const grid = document.getElementById('profile-posts-grid');
-            grid.innerHTML = '';
-            for(let i=1; i<=3; i++) {
-                grid.innerHTML += `
-                    <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                        <div class="flex gap-4">
-                            <img src="https://picsum.photos/seed/post${i}/200" class="w-20 h-20 rounded-xl object-cover border border-gray-50">
-                            <div class="flex flex-col justify-center flex-grow">
-                                <h4 class="font-bold text-sm text-gray-800 leading-tight">Mi foro número ${i} publicado en Dinoti</h4>
-                                <div class="flex gap-4 mt-2">
-                                    <span class="text-[10px] text-gray-400 font-bold flex items-center gap-1">
-                                        <i class="fa-solid fa-heart text-red-400"></i> ${i*12} likes
-                                    </span>
-                                    <span class="text-[10px] text-gray-400 font-bold flex items-center gap-1">
-                                        <i class="fa-solid fa-comment text-blue-400"></i> ${i+1} coment.
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="w-full bg-[#0052cc] text-white py-2 rounded-xl font-black uppercase text-[9px] tracking-widest shadow-lg shadow-blue-50 active:scale-95 transition-all">
-                            Ver Foro
-                        </button>
-                    </div>
-                `;
-            }
-        }
-
-        function showProfileEditor() {
-            document.getElementById('menu-main-view').classList.add('hidden');
-            document.getElementById('menu-edit-view').classList.remove('hidden');
-            renderProfilePicker();
-        }
-
-        function showMainMenu() {
-            document.getElementById('menu-main-view').classList.remove('hidden');
-            document.getElementById('menu-edit-view').classList.add('hidden');
-        }
-
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('avatar-preview-edit').src = e.target.result;
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        function saveProfile() {
-            const newName = document.getElementById('edit-username').value;
-            const newOcc = document.getElementById('edit-occupation').value;
-            const newImg = document.getElementById('avatar-preview-edit').src;
-            document.getElementById('display-username').innerText = newName;
-            document.getElementById('display-occupation').innerText = newOcc;
-            document.getElementById('menu-avatar').src = newImg;
-            alert('¡Perfil y preferencias guardadas con éxito!');
-            showMainMenu();
-        }
-
-        function renderProfilePicker() {
-            const picker = document.getElementById('profile-default-picker');
-            picker.innerHTML = '';
-            defaultNames.slice(0, 4).forEach((name, index) => {
-                const color = dinotiColors[index % dinotiColors.length];
-                const span = document.createElement('span');
-                span.className = `tag ${color} pre-tag opacity-70 hover:opacity-100`;
-                span.innerText = name;
-                span.onclick = () => selectProfileTag(name, color);
-                picker.appendChild(span);
-            });
-        }
-
-        function selectProfileTag(name, color) {
-            const container = document.getElementById('profile-selected-tags');
-            if(container.innerText.includes(name)) return;
-            const span = document.createElement('span');
-            span.className = `tag ${color} animate-pulse`;
-            span.innerHTML = `${name} <i class="fa-solid fa-xmark ml-1 cursor-pointer" onclick="this.parentElement.remove()"></i>`;
-            container.appendChild(span);
-        }
-
-        function addProfileTag() {
-            const input = document.getElementById('profile-tag-input');
-            if (input.value.trim() !== "") {
-                selectProfileTag(input.value, 'bg-black');
-                input.value = "";
-            }
-        }
-
-        function toggleEditor() {
-            const feed = document.getElementById('feed-container');
-            const editor = document.getElementById('editor-container');
-            const profileView = document.getElementById('profile-view-container');
-            const btnText = document.getElementById('create-text');
-            const btnIcon = document.getElementById('create-icon');
+            <hr class="border-dashed border-gray-300 mb-4">
             
-            profileView.classList.add('hidden'); 
+            <div class="flex items-center gap-2 mb-3 text-gray-400">
+                <i class="fa-solid fa-tags text-[10px]"></i>
+                <span class="text-[9px] font-black uppercase tracking-widest">Explorar Etiquetas:</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">${tagsHtml}</div>
+        </div>`;
+});
 
-            if (editor.classList.contains('hidden')) {
-                feed.classList.add('hidden');
-                editor.classList.remove('hidden');
-                btnText.innerText = "Regresar";
-                btnIcon.className = "fa-solid fa-xmark";
-                renderDefaultPicker();
-            } else {
-                feed.classList.remove('hidden');
-                editor.classList.add('hidden');
-                btnText.innerText = "Crear Foro";
-                btnIcon.className = "fa-solid fa-plus";
-            }
-        }
+function toggleMenu() {
+    document.getElementById('side-menu').classList.toggle('translate-x-full');
+    document.getElementById('overlay').classList.toggle('hidden');
+}
 
-        function renderDefaultPicker() {
-            const picker = document.getElementById('default-tags-picker');
-            picker.innerHTML = '';
-            defaultNames.forEach((name, index) => {
-                const color = dinotiColors[index % dinotiColors.length];
-                const span = document.createElement('span');
-                span.className = `tag ${color} pre-tag`;
-                span.innerText = name;
-                span.onclick = () => selectTag(name, color);
-                picker.appendChild(span);
-            });
-        }
+function toggleFollow(btn) {
+    const isFollowing = btn.innerText === "SEGUIR";
+    btn.innerText = isFollowing ? "SIGUIENDO" : "SEGUIR";
+    btn.classList.toggle('not-following', !isFollowing);
+    btn.classList.toggle('following', isFollowing);
+}
 
-        function selectTag(name, color) {
-            const container = document.getElementById('selected-tags');
-            const span = document.createElement('span');
-            span.className = `tag ${color} animate-bounce`;
-            span.innerHTML = `${name} <i class="fa-solid fa-circle-xmark ml-1 cursor-pointer" onclick="this.parentElement.remove()"></i>`;
-            container.appendChild(span);
-        }
+function toggleSave(btn) {
+    const icon = btn.querySelector('i');
+    const isSaved = icon.classList.contains('fa-regular');
+    icon.classList.toggle('fa-regular', !isSaved);
+    icon.classList.toggle('fa-solid', isSaved);
+    icon.classList.toggle('text-gray-900', isSaved);
+}
 
-        function addCustomTag() {
-            const input = document.getElementById('custom-tag-input');
-            if (input.value.trim() !== "") {
-                selectTag(input.value, 'bg-black');
-                input.value = "";
-            }
-        }
-
-        function publishPost() { alert('¡Foro publicado!'); toggleEditor(); }
-
-        const postsContainer = document.getElementById('posts-wrapper');
-        for (let i = 1; i <= 6; i++) {
-            const randomBlackTag = blackTags[Math.floor(Math.random() * blackTags.length)];
-            const tagsHtml = topics[0].tags.map(tag => `<span class="tag ${dinotiColors[i % 5]}">${tag}</span>`).join('');
-            postsContainer.innerHTML += `
-                <div class="card-border p-5 mb-6 bg-white shadow-md">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex items-center gap-3">
-                            <img src="https://i.pravatar.cc/150?u=${i+10}" class="w-11 h-11 rounded-full object-cover shadow-sm">
-                            <div class="flex items-center gap-2">
-                                <span class="font-bold text-gray-900 text-sm">Usuario_${i*33}</span>
-                                <button onclick="toggleFollow(this)" class="btn-follow not-following">Seguir</button>
-                            </div>
-                        </div>
-                        <div class="flex gap-2 items-center">
-                            <span class="tag bg-black text-[8px] px-2 py-0.5 uppercase tracking-tighter">${randomBlackTag}</span>
-                            <div class="text-[9px] border border-gray-100 rounded-full px-3 py-1 text-gray-400 font-black bg-gray-50 uppercase tracking-tighter">Hoy</div>
-                        </div>
-                    </div>
-                    <h3 class="text-lg font-bold leading-tight mb-4 text-gray-900">${topics[0].t}</h3>
-                    <div class="w-full aspect-video rounded-[24px] mb-5 overflow-hidden border border-gray-50">
-                        <img src="${topics[0].img}?sig=${i}" class="w-full h-full object-cover">
-                    </div>
-                    <div class="flex items-center justify-between mb-5 px-1">
-                        <button class="bg-[#0052cc] text-white px-7 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-100 active:scale-95 transition-all">Ver Foro</button>
-                        <div class="flex items-center gap-5 text-gray-700 font-bold text-sm">
-                            <span class="flex items-center gap-2"><i class="fa-regular fa-heart text-red-500 text-lg"></i> ${200 + i*45}</span>
-                            <span class="flex items-center gap-2"><i class="fa-regular fa-comment text-blue-500 text-lg"></i> ${i + 2}</span>
-                        </div>
-                    </div>
-                    <hr class="border-dashed border-gray-300 mb-4">
-                    <div class="flex flex-wrap gap-2">${tagsHtml}<span class="tag bg-black">#DinotiForo</span></div>
-                </div>`;
-        }
-    </script>
+function toggleLike(btn) {
+    const icon = btn.querySelector('i');
+    const isLiked = icon.classList.contains('fa-regular');
+    icon.classList.toggle('fa-regular', !isLiked);
+    icon.classList.toggle('fa-solid', isLiked);
+}
+</script>
 </body>
 </html>
